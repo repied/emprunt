@@ -12,8 +12,6 @@ dist/
 *.egg-info/
 .env
 
-# devcontainer files
-.devcontainer/**
 
 # Python packages
 *.egg

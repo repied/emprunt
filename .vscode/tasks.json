@@ -4,7 +4,7 @@
         {
             "label": "Run Uvicorn",
             "type": "shell",
-            "command": "uvicorn emprunt.app:app --reload --host 0.0.0.0 --port 8000",
+            "command": "make dev",
             "isBackground": true,
             "problemMatcher": []
         }
