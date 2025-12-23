@@ -1,3 +1,5 @@
+import os
+from pathlib import Path
 from fastapi import FastAPI, Request, Form
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
@@ -7,10 +9,12 @@ from .simulator import simulate_mortgage
 
 app = FastAPI(title="Emprunt Mortgage Simulator")
 
-# Mount static and templates directories
-# Note: When running from package root in dev, Jinja2Templates directory is relative to CWD
-app.mount("/static", StaticFiles(directory="src/emprunt/static"), name="static")
-templates = Jinja2Templates(directory="src/emprunt/templates")
+# Determine the base directory for the package
+BASE_DIR = Path(__file__).resolve().parent
+
+# Mount static and templates directories using absolute paths relative to this file
+app.mount("/static", StaticFiles(directory=str(BASE_DIR / "static")), name="static")
+templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
 
 
 class SimRequest(BaseModel):
