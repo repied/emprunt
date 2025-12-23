@@ -1,0 +1,20 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+.env.*
+.env.local
+.vscode/.history
+.idea/
+.DS_Store
+build/
+dist/
+*.egg-info/
+.env
+
+# devcontainer files
+.devcontainer/**
+
+# Python packages
+*.egg
+.eggs/
