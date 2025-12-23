@@ -29,7 +29,7 @@
         <section class="result">
             <h2>Summary</h2>
             <p>Monthly payment: <strong>{{ result.payment }}</strong></p>
-            <h3>Schedule (first 12 rows)</h3>
+            <h3>Schedule</h3>
             <table>
                 <thead>
                     <tr>
@@ -41,7 +41,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for row in result.schedule[:12] %}
+                    {% for row in result.schedule %}
                     <tr>
                         <td>{{ row.period }}</td>
                         <td>{{ row.payment }}</td>
