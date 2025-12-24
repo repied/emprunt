@@ -36,22 +36,26 @@ def index(request: Request):
 @app.post("/simulate", response_class=HTMLResponse)
 async def simulate(
     request: Request,
-    home_cost: float = Form(...),
-    down_payment: float = Form(...),
+    home_cost: str = Form(...),
+    down_payment: str = Form(...),
     annual_rate: float = Form(...),
     years: int = Form(...),
-    savings: float = Form(...),
+    savings: str = Form(...),
     investment_rate: float = Form(...),
-    monthly_cash: float = Form(...),
+    monthly_cash: str = Form(...),
 ):
+    # Clean money inputs that might contain commas
+    def clean_money(val: str) -> float:
+        return float(val.replace(",", ""))
+
     result = simulate_mortgage(
-        home_cost,
-        down_payment,
+        clean_money(home_cost),
+        clean_money(down_payment),
         annual_rate,
         years,
-        savings,
+        clean_money(savings),
         investment_rate,
-        monthly_cash
+        clean_money(monthly_cash)
     )
     return templates.TemplateResponse("index.html", {"request": request, "result": result})
 

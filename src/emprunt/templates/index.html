@@ -25,37 +25,37 @@
                 <div class="form-grid">
                     <label>
                         Home Cost (€)
-                        <input name="home_cost" type="number" step="10000"
-                            value="{{ result.home_cost if result else 300000 }}" required>
+                        <input name="home_cost" type="text" value="{{ " {:,.0f}".format(result.home_cost) if result
+                            else "1,000,000" }}" required>
                     </label>
                     <label>
                         Down Payment (€)
-                        <input name="down_payment" type="number" step="1000"
-                            value="{{ result.down_payment if result else 60000 }}" required>
+                        <input name="down_payment" type="text" value="{{ " {:,.0f}".format(result.down_payment) if
+                            result else "500,000" }}" required>
                     </label>
                     <label>
                         Annual Rate (%)
                         <input name="annual_rate" type="number" step="0.01"
-                            value="{{ result.annual_rate if result else 3.5 }}" required>
+                            value="{{ result.annual_rate if result else 3 }}" required>
                     </label>
                     <label>
                         Years
-                        <input name="years" type="number" value="{{ result.years if result else 25 }}" required>
+                        <input name="years" type="number" value="{{ result.years if result else 20 }}" required>
                     </label>
                     <label>
                         Initial Savings (€)
-                        <input name="savings" type="number" step="1000"
-                            value="{{ result.savings if result else 100000 }}" required>
+                        <input name="savings" type="text" value="{{ " {:,.0f}".format(result.savings) if result
+                            else "1,000,000" }}" required>
                     </label>
                     <label>
                         Investment Rate (%)
                         <input name="investment_rate" type="number" step="0.1"
-                            value="{{ result.investment_rate if result else 7 }}" required>
+                            value="{{ result.investment_rate if result else 3 }}" required>
                     </label>
                     <label>
                         Monthly Cash flow (€)
-                        <input name="monthly_cash" type="number" step="100"
-                            value="{{ result.monthly_cash if result else 2500 }}" required>
+                        <input name="monthly_cash" type="text" value="{{ " {:,.0f}".format(result.monthly_cash) if
+                            result else "5,000" }}" required>
                     </label>
                 </div>
                 <button type="submit">Simulate Wealth</button>
@@ -100,7 +100,7 @@
                     </thead>
                     <tbody>
                         {% for row in result.schedule %}
-                        {% if loop.index % 12 == 1 or loop.last %}
+                        {% if loop.index % (12*5) == 1 or loop.last %}
                         <tr>
                             <td>{{ row.period }}</td>
                             <td>€{{ "{:,.0f}".format(row.payment) }}</td>
@@ -113,7 +113,7 @@
                         {% endfor %}
                     </tbody>
                 </table>
-                <p class="table-note">* Showing yearly snapshots for brevity.</p>
+                <p class="table-note">* Showing every 5 years for brevity.</p>
             </div>
         </section>
 
@@ -188,7 +188,7 @@
     </main>
 
     <footer>
-        <p>&copy; 2023 Emprunt. Built with Precision & Style.</p>
+        <p>&copy; 2025 Emprunt.</p>
     </footer>
 </body>
 
