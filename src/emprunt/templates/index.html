@@ -16,172 +16,254 @@
 <body>
     <header>
         <h1>Emprunt</h1>
-        <p>Advanced Mortgage Simulation & Interest Analysis</p>
+        <p>How to choose the size of a down payment when buying a house? <br>
+            This tool helps to visualize different scenarios.<br>
+            It assumes that initial savings are split between the down payment and an investment account.<br>
+            And that later monthly disposable cash flows will be split between mortgage repayments and
+            investment contributions.
+        </p>
     </header>
 
     <main>
         <section class="form">
             <form method="post" action="/simulate">
-                <div class="form-grid">
-                    <label>
-                        Home Cost (€)
-                        <input name="home_cost" type="text" value="{{ " {:,.0f}".format(result.home_cost) if result
-                            else "1,000,000" }}" required>
-                    </label>
-                    <label>
-                        Down Payment (€)
-                        <input name="down_payment" type="text" value="{{ " {:,.0f}".format(result.down_payment) if
-                            result else "500,000" }}" required>
-                    </label>
-                    <label>
-                        Annual Rate (%)
-                        <input name="annual_rate" type="number" step="0.01"
-                            value="{{ result.annual_rate if result else 3 }}" required>
-                    </label>
-                    <label>
-                        Years
-                        <input name="years" type="number" value="{{ result.years if result else 20 }}" required>
-                    </label>
-                    <label>
-                        Initial Savings (€)
-                        <input name="savings" type="text" value="{{ " {:,.0f}".format(result.savings) if result
-                            else "1,000,000" }}" required>
-                    </label>
-                    <label>
-                        Investment Rate (%)
-                        <input name="investment_rate" type="number" step="0.1"
-                            value="{{ result.investment_rate if result else 3 }}" required>
-                    </label>
-                    <label>
-                        Monthly Cash flow (€)
-                        <input name="monthly_cash" type="text" value="{{ " {:,.0f}".format(result.monthly_cash) if
-                            result else "5,000" }}" required>
-                    </label>
+                <div class="dual-grid">
+                    <!-- Scenario A -->
+                    <div class="scenario-block">
+                        <div class="scenario-title">Scenario A</div>
+                        <div class="form-grid">
+                            <label>Home Cost (€)
+                                <input name="s1_home_cost" type="text"
+                                    value="{{ '{:,.0f}'.format(result1.home_cost) if result1 else '1,000,000' }}"
+                                    required>
+                            </label>
+                            <label>Down Payment (€)
+                                <input name="s1_down_payment" type="text"
+                                    value="{{ '{:,.0f}'.format(result1.down_payment) if result1 else '200,000' }}"
+                                    required>
+                            </label>
+                            <label>Annual Rate (%)
+                                <input name="s1_annual_rate" type="number" step="0.01"
+                                    value="{{ result1.annual_rate if result1 else 3.0 }}" required>
+                            </label>
+                            <label>Years
+                                <input name="s1_years" type="number" value="{{ result1.years if result1 else 20 }}"
+                                    required>
+                            </label>
+                            <label>Initial Savings (€)
+                                <input name="s1_savings" type="text" value="{{ '{:,.0f}'.format(result1.savings) if
+                                    result1 else '1,000,000' }}" required>
+                            </label>
+                            <label>Investment Rate (%)
+                                <input name="s1_investment_rate" type="number" step="0.1"
+                                    value="{{ result1.investment_rate if result1 else 3.0 }}" required>
+                            </label>
+                            <label>Monthly Cash flow (€)
+                                <input name="s1_monthly_cash" type="text"
+                                    value="{{ '{:,.0f}'.format(result1.monthly_cash) if result1 else '5,000' }}"
+                                    required>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Scenario B -->
+                    <div class="scenario-block">
+                        <div class="scenario-title">Scenario B</div>
+                        <div class="form-grid">
+                            <label>Home Cost (€)
+                                <input name="s2_home_cost" type="text"
+                                    value="{{ ' {:,.0f}'.format(result2.home_cost) if result2 else '1,000,000' }}"
+                                    required>
+                            </label>
+                            <label>Down Payment (€)
+                                <input name="s2_down_payment" type="text"
+                                    value="{{ ' {:,.0f}'.format(result2.down_payment) if result2 else '800,000' }}"
+                                    required>
+                            </label>
+                            <label>Annual Rate (%)
+                                <input name="s2_annual_rate" type="number" step="0.01"
+                                    value="{{ result2.annual_rate if result2 else 3.0 }}" required>
+                            </label>
+                            <label>Years
+                                <input name="s2_years" type="number" value="{{ result2.years if result2 else 20 }}"
+                                    required>
+                            </label>
+                            <label>Initial Savings (€)
+                                <input name="s2_savings" type="text" value="{{ ' {:,.0f}'.format(result2.savings) if
+                                    result2 else '1,000,000' }}" required>
+                            </label>
+                            <label>Investment Rate (%)
+                                <input name="s2_investment_rate" type="number" step="0.1"
+                                    value="{{ result2.investment_rate if result2 else 3.0 }}" required>
+                            </label>
+                            <label>Monthly Cash flow (€)
+                                <input name="s2_monthly_cash" type="text"
+                                    value="{{ ' {:,.0f}'.format(result2.monthly_cash) if result2 else '5,000' }}"
+                                    required>
+                            </label>
+                        </div>
+                    </div>
                 </div>
-                <button type="submit">Simulate Wealth</button>
+                <button type="submit" style="width: 100%; margin-top: 2rem;">Compare Scenarios</button>
             </form>
         </section>
 
-        {% if result %}
+        {% if result1 and result2 %}
         <section class="result">
-            <h2>Simulation Results</h2>
-
-            <div class="summary-cards">
-                <div class="card">
-                    <span class="label">Monthly Payment</span>
-                    <span class="value">€{{ "{:,.0f}".format(result.payment) }}</span>
-                </div>
-                <div class="card">
-                    <span class="label">Loan Amount</span>
-                    <span class="value">€{{ "{:,.0f}".format(result.principal) }}</span>
-                </div>
-                <div class="card">
-                    <span class="label">Final Wealth</span>
-                    <span class="value">€{{ "{:,.0f}".format(result.schedule[-1].combined_wealth) }}</span>
-                </div>
-            </div>
+            <h2>Scenario Comparison</h2>
 
             <div id="plot-container">
-                <div id="wealth-plot" style="width:100%;height:500px;"></div>
+                <div id="comparison-plot" style="width:100%;height:500px;"></div>
             </div>
 
-            <h3>Amortization & Growth</h3>
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Month</th>
-                            <th>Payment</th>
-                            <th>Balance</th>
-                            <th>Home Equity</th>
-                            <th>Investments</th>
-                            <th>Combined Wealth</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for row in result.schedule %}
-                        {% if loop.index % (12*5) == 1 or loop.last %}
-                        <tr>
-                            <td>{{ row.period }}</td>
-                            <td>€{{ "{:,.0f}".format(row.payment) }}</td>
-                            <td>€{{ "{:,.0f}".format(row.balance) }}</td>
-                            <td>€{{ "{:,.0f}".format(row.home_equity) }}</td>
-                            <td>€{{ "{:,.0f}".format(row.investment_portfolio) }}</td>
-                            <td>€{{ "{:,.0f}".format(row.combined_wealth) }}</td>
-                        </tr>
-                        {% endif %}
-                        {% endfor %}
-                    </tbody>
-                </table>
-                <p class="table-note">* Showing every 5 years for brevity.</p>
+            <div class="dual-grid">
+                <!-- Results Scenario A -->
+                <div class="scenario-block">
+                    <div class="scenario-title">Scenario A Results</div>
+                    <div class="summary-cards">
+                        <div class="card">
+                            <span class="label">Monthly Payment</span>
+                            <span class="value">€{{ ' {:,.0f}'.format(result1.payment) }}</span>
+                        </div>
+                        <div class="card">
+                            <span class="label">Final Wealth</span>
+                            <span class="value">€{{ ' {:,.0f}'.format(result1.schedule[-1].combined_wealth) }}</span>
+                        </div>
+                    </div>
+                    <div id="wealth-plot-a" style="width:100%;height:350px;"></div>
+                </div>
+
+                <!-- Results Scenario B -->
+                <div class="scenario-block">
+                    <div class="scenario-title">Scenario B Results</div>
+                    <div class="summary-cards">
+                        <div class="card">
+                            <span class="label">Monthly Payment</span>
+                            <span class="value">€{{ '{:,.0f}'.format(result2.payment) }}</span>
+                        </div>
+                        <div class="card">
+                            <span class="label">Final Wealth</span>
+                            <span class="value">€{{ '{:,.0f}'.format(result2.schedule[-1].combined_wealth) }}</span>
+                        </div>
+                    </div>
+                    <div id="wealth-plot-b" style="width:100%;height:350px;"></div>
+                </div>
             </div>
+
+            <div class="dual-grid" style="margin-top: 3rem;">
+                <div class="table-container">
+                    <h3>Scenario A Schedule</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Month</th>
+                                <th>Equity</th>
+                                <th>Invest.</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in result1.schedule %}
+                            {% if loop.index % (12*5) == 1 or loop.last %}
+                            <tr>
+                                <td>{{ row.period }}</td>
+                                <td>€{{ "{:,.0f}".format(row.home_equity) }}</td>
+                                <td>€{{ "{:,.0f}".format(row.investment_portfolio) }}</td>
+                                <td>€{{ "{:,.0f}".format(row.combined_wealth) }}</td>
+                            </tr>
+                            {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="table-container">
+                    <h3>Scenario B Schedule</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Month</th>
+                                <th>Equity</th>
+                                <th>Invest.</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in result2.schedule %}
+                            {% if loop.index % (12*5) == 1 or loop.last %}
+                            <tr>
+                                <td>{{ row.period }}</td>
+                                <td>€{{ "{:,.0f}".format(row.home_equity) }}</td>
+                                <td>€{{ "{:,.0f}".format(row.investment_portfolio) }}</td>
+                                <td>€{{ "{:,.0f}".format(row.combined_wealth) }}</td>
+                            </tr>
+                            {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <p class="table-note" style="text-align: center;">* Showing every 5 years for brevity.</p>
         </section>
 
         <script>
             (function () {
-                const schedule = {{ result.schedule | tojson | safe
+                const s1 = {{ result1.schedule | tojson | safe
             }};
-            if (!schedule || schedule.length === 0) return;
+            const s2 = {{ result2.schedule | tojson | safe }};
 
-            const periods = schedule.map(row => row.period);
-            const equities = schedule.map(row => row.home_equity);
-            const investments = schedule.map(row => row.investment_portfolio);
-            const combined = schedule.map(row => row.combined_wealth);
+            const periods = s1.map(row => row.period);
 
-            const traceEquity = {
+            // Combined Comparison Plot
+            const traceA = {
                 x: periods,
-                y: equities,
-                name: 'Home Equity',
-                type: 'scatter',
-                mode: 'lines',
-                stackgroup: 'one',
-                line: { color: '#4f46e5', width: 2 },
-                fillcolor: 'rgba(79, 70, 229, 0.4)'
+                y: s1.map(row => row.combined_wealth),
+                name: 'Scenario A Wealth',
+                line: { color: '#4f46e5', width: 3 }
+            };
+            const traceB = {
+                x: periods,
+                y: s2.map(row => row.combined_wealth),
+                name: 'Scenario B Wealth',
+                line: { color: '#ef4444', width: 3 }
             };
 
-            const traceInvestments = {
-                x: periods,
-                y: investments,
-                name: 'Investments',
-                type: 'scatter',
-                mode: 'lines',
-                stackgroup: 'one',
-                line: { color: '#10b981', width: 2 },
-                fillcolor: 'rgba(16, 185, 129, 0.4)'
-            };
-
-            const traceCombined = {
-                x: periods,
-                y: combined,
-                name: 'Combined Wealth',
-                type: 'scatter',
-                mode: 'lines',
-                line: { color: '#000', width: 2, dash: 'dot' }
-            };
-
-            const layout = {
-                title: {
-                    text: 'Combined Wealth Projection',
-                    font: { family: 'Inter', size: 24, weight: 700 }
-                },
-                xaxis: {
-                    title: 'Months',
-                    gridcolor: '#f0f0f0'
-                },
-                yaxis: {
-                    title: 'Wealth (€)',
-                    gridcolor: '#f0f0f0',
-                    tickformat: '€,.0f'
-                },
+            const layoutComp = {
+                title: { text: 'Combined Wealth Comparison', font: { family: 'Inter', size: 24, weight: 700 } },
+                xaxis: { title: 'Months' },
+                yaxis: { title: 'Wealth (€)', tickformat: '€,.0f' },
                 margin: { t: 80, b: 60, l: 80, r: 40 },
                 hovermode: 'x unified',
                 legend: { orientation: 'h', y: -0.2 },
                 paper_bgcolor: 'rgba(0,0,0,0)',
                 plot_bgcolor: 'rgba(0,0,0,0)'
             };
+            Plotly.newPlot('comparison-plot', [traceA, traceB], layoutComp, { responsive: true, displayModeBar: false });
 
-            const config = { responsive: true, displayModeBar: false };
-            Plotly.newPlot('wealth-plot', [traceEquity, traceInvestments, traceCombined], layout, config);
+            // Individual Plots
+            const createIndividualPlot = (id, data, title) => {
+                const traceEquity = {
+                    x: periods, y: data.map(row => row.home_equity),
+                    name: 'Equity', stackgroup: 'one', line: { color: '#4f46e5', width: 1 }, fillcolor: '#4f46e544'
+                };
+                const traceInvest = {
+                    x: periods, y: data.map(row => row.investment_portfolio),
+                    name: 'Invest.', stackgroup: 'one', line: { color: '#10b981', width: 1 }, fillcolor: '#10b98144'
+                };
+                const layout = {
+                    title: { text: title, font: { family: 'Inter', size: 16, weight: 600 } },
+                    xaxis: { title: 'Months' },
+                    yaxis: { title: '€', tickformat: '€,.0f' },
+                    margin: { t: 40, b: 40, l: 60, r: 20 },
+                    showlegend: false,
+                    paper_bgcolor: 'rgba(0,0,0,0)',
+                    plot_bgcolor: 'rgba(0,0,0,0)'
+                };
+                Plotly.newPlot(id, [traceEquity, traceInvest], layout, { responsive: true, displayModeBar: false });
+            };
+
+            createIndividualPlot('wealth-plot-a', s1, 'Scenario A Decomposition');
+            createIndividualPlot('wealth-plot-b', s2, 'Scenario B Decomposition');
             }) ();
         </script>
         {% endif %}

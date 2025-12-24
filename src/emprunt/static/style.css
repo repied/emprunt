@@ -59,26 +59,40 @@ section {
     border: 1px solid var(--border);
 }
 
-.form-grid {
+.dual-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    align-items: start;
 }
 
-.table-note {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-    margin-top: 1rem;
-    font-style: italic;
+.scenario-block {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.scenario-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--border);
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
 }
 
 label {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.35rem;
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     color: var(--text-muted);
 }
 
@@ -133,7 +147,7 @@ button:active {
 
 .card {
     background: var(--bg);
-    padding: 1.5rem;
+    padding: 1rem;
     border-radius: var(--radius);
     text-align: center;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -149,13 +163,13 @@ button:active {
 .card .label {
     display: block;
     color: var(--text-muted);
-    font-size: 0.875rem;
-    margin-bottom: 0.5rem;
+    font-size: 0.75rem;
+    margin-bottom: 0.25rem;
 }
 
 .card .value {
     display: block;
-    font-size: 1.5rem;
+    font-size: 1.125rem;
     font-weight: 700;
     color: var(--primary);
 }

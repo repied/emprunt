@@ -36,28 +36,53 @@ def index(request: Request):
 @app.post("/simulate", response_class=HTMLResponse)
 async def simulate(
     request: Request,
-    home_cost: str = Form(...),
-    down_payment: str = Form(...),
-    annual_rate: float = Form(...),
-    years: int = Form(...),
-    savings: str = Form(...),
-    investment_rate: float = Form(...),
-    monthly_cash: str = Form(...),
+    # Scenario 1
+    s1_home_cost: str = Form(...),
+    s1_down_payment: str = Form(...),
+    s1_annual_rate: float = Form(...),
+    s1_years: int = Form(...),
+    s1_savings: str = Form(...),
+    s1_investment_rate: float = Form(...),
+    s1_monthly_cash: str = Form(...),
+    # Scenario 2
+    s2_home_cost: str = Form(...),
+    s2_down_payment: str = Form(...),
+    s2_annual_rate: float = Form(...),
+    s2_years: int = Form(...),
+    s2_savings: str = Form(...),
+    s2_investment_rate: float = Form(...),
+    s2_monthly_cash: str = Form(...),
 ):
-    # Clean money inputs that might contain commas
     def clean_money(val: str) -> float:
         return float(val.replace(",", ""))
 
-    result = simulate_mortgage(
-        clean_money(home_cost),
-        clean_money(down_payment),
-        annual_rate,
-        years,
-        clean_money(savings),
-        investment_rate,
-        clean_money(monthly_cash)
+    # Run Scenario 1
+    res1 = simulate_mortgage(
+        clean_money(s1_home_cost),
+        clean_money(s1_down_payment),
+        s1_annual_rate,
+        s1_years,
+        clean_money(s1_savings),
+        s1_investment_rate,
+        clean_money(s1_monthly_cash)
     )
-    return templates.TemplateResponse("index.html", {"request": request, "result": result})
+
+    # Run Scenario 2
+    res2 = simulate_mortgage(
+        clean_money(s2_home_cost),
+        clean_money(s2_down_payment),
+        s2_annual_rate,
+        s2_years,
+        clean_money(s2_savings),
+        s2_investment_rate,
+        clean_money(s2_monthly_cash)
+    )
+
+    return templates.TemplateResponse("index.html", {
+        "request": request,
+        "result1": res1,
+        "result2": res2
+    })
 
 
 @app.post("/api/simulate")
