@@ -18,9 +18,13 @@ templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
 
 
 class SimRequest(BaseModel):
-    principal: float
+    home_cost: float
+    down_payment: float
     annual_rate: float
     years: int
+    savings: float
+    investment_rate: float
+    monthly_cash: float
     payments_per_year: int = 12
 
 
@@ -30,12 +34,38 @@ def index(request: Request):
 
 
 @app.post("/simulate", response_class=HTMLResponse)
-async def simulate(request: Request, principal: float = Form(...), annual_rate: float = Form(...), years: int = Form(...)):
-    result = simulate_mortgage(principal, annual_rate, years)
+async def simulate(
+    request: Request,
+    home_cost: float = Form(...),
+    down_payment: float = Form(...),
+    annual_rate: float = Form(...),
+    years: int = Form(...),
+    savings: float = Form(...),
+    investment_rate: float = Form(...),
+    monthly_cash: float = Form(...),
+):
+    result = simulate_mortgage(
+        home_cost,
+        down_payment,
+        annual_rate,
+        years,
+        savings,
+        investment_rate,
+        monthly_cash
+    )
     return templates.TemplateResponse("index.html", {"request": request, "result": result})
 
 
 @app.post("/api/simulate")
 def api_simulate(req: SimRequest):
-    result = simulate_mortgage(req.principal, req.annual_rate, req.years, req.payments_per_year)
+    result = simulate_mortgage(
+        req.home_cost,
+        req.down_payment,
+        req.annual_rate,
+        req.years,
+        req.savings,
+        req.investment_rate,
+        req.monthly_cash,
+        req.payments_per_year
+    )
     return JSONResponse(content=result)

@@ -59,11 +59,18 @@ section {
     border: 1px solid var(--border);
 }
 
-.form form {
+.form-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 1.5rem;
-    align-items: flex-end;
+    margin-bottom: 2rem;
+}
+
+.table-note {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 1rem;
+    font-style: italic;
 }
 
 label {

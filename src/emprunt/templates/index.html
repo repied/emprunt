@@ -22,21 +22,43 @@
     <main>
         <section class="form">
             <form method="post" action="/simulate">
-                <label>
-                    Principal ($)
-                    <input name="principal" type="number" step="0.01"
-                        value="{{ result.principal if result else 100000 }}" required>
-                </label>
-                <label>
-                    Annual Rate (%)
-                    <input name="annual_rate" type="number" step="0.01"
-                        value="{{ result.annual_rate if result else 3.5 }}" required>
-                </label>
-                <label>
-                    Years
-                    <input name="years" type="number" value="{{ result.years if result else 20 }}" required>
-                </label>
-                <button type="submit">Simulate Mortgage</button>
+                <div class="form-grid">
+                    <label>
+                        Home Cost (€)
+                        <input name="home_cost" type="number" step="10000"
+                            value="{{ result.home_cost if result else 300000 }}" required>
+                    </label>
+                    <label>
+                        Down Payment (€)
+                        <input name="down_payment" type="number" step="1000"
+                            value="{{ result.down_payment if result else 60000 }}" required>
+                    </label>
+                    <label>
+                        Annual Rate (%)
+                        <input name="annual_rate" type="number" step="0.01"
+                            value="{{ result.annual_rate if result else 3.5 }}" required>
+                    </label>
+                    <label>
+                        Years
+                        <input name="years" type="number" value="{{ result.years if result else 25 }}" required>
+                    </label>
+                    <label>
+                        Initial Savings (€)
+                        <input name="savings" type="number" step="1000"
+                            value="{{ result.savings if result else 100000 }}" required>
+                    </label>
+                    <label>
+                        Investment Rate (%)
+                        <input name="investment_rate" type="number" step="0.1"
+                            value="{{ result.investment_rate if result else 7 }}" required>
+                    </label>
+                    <label>
+                        Monthly Cash flow (€)
+                        <input name="monthly_cash" type="number" step="100"
+                            value="{{ result.monthly_cash if result else 2500 }}" required>
+                    </label>
+                </div>
+                <button type="submit">Simulate Wealth</button>
             </form>
         </section>
 
@@ -47,46 +69,51 @@
             <div class="summary-cards">
                 <div class="card">
                     <span class="label">Monthly Payment</span>
-                    <span class="value">${{ "{:,.2f}".format(result.payment) }}</span>
+                    <span class="value">€{{ "{:,.0f}".format(result.payment) }}</span>
                 </div>
                 <div class="card">
-                    <span class="label">Total Principal</span>
-                    <span class="value">${{ "{:,.2f}".format(result.principal) }}</span>
+                    <span class="label">Loan Amount</span>
+                    <span class="value">€{{ "{:,.0f}".format(result.principal) }}</span>
                 </div>
                 <div class="card">
-                    <span class="label">Loan Duration</span>
-                    <span class="value">{{ result.years }} Years</span>
+                    <span class="label">Final Wealth</span>
+                    <span class="value">€{{ "{:,.0f}".format(result.schedule[-1].combined_wealth) }}</span>
                 </div>
             </div>
 
             <div id="plot-container">
-                <div id="balance-plot" style="width:100%;height:450px;"></div>
+                <div id="wealth-plot" style="width:100%;height:500px;"></div>
             </div>
 
-            <h3>Amortization Schedule</h3>
+            <h3>Amortization & Growth</h3>
             <div class="table-container">
                 <table>
                     <thead>
                         <tr>
-                            <th>Period (Month)</th>
+                            <th>Month</th>
                             <th>Payment</th>
-                            <th>Principal Paid</th>
-                            <th>Interest Paid</th>
-                            <th>Remaining Balance</th>
+                            <th>Balance</th>
+                            <th>Home Equity</th>
+                            <th>Investments</th>
+                            <th>Combined Wealth</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for row in result.schedule %}
+                        {% if loop.index % 12 == 1 or loop.last %}
                         <tr>
                             <td>{{ row.period }}</td>
-                            <td>${{ "{:,.2f}".format(row.payment) }}</td>
-                            <td>${{ "{:,.2f}".format(row.principal_paid) }}</td>
-                            <td>${{ "{:,.2f}".format(row.interest_paid) }}</td>
-                            <td>${{ "{:,.2f}".format(row.balance) }}</td>
+                            <td>€{{ "{:,.0f}".format(row.payment) }}</td>
+                            <td>€{{ "{:,.0f}".format(row.balance) }}</td>
+                            <td>€{{ "{:,.0f}".format(row.home_equity) }}</td>
+                            <td>€{{ "{:,.0f}".format(row.investment_portfolio) }}</td>
+                            <td>€{{ "{:,.0f}".format(row.combined_wealth) }}</td>
                         </tr>
+                        {% endif %}
                         {% endfor %}
                     </tbody>
                 </table>
+                <p class="table-note">* Showing yearly snapshots for brevity.</p>
             </div>
         </section>
 
@@ -97,46 +124,64 @@
             if (!schedule || schedule.length === 0) return;
 
             const periods = schedule.map(row => row.period);
-            const balances = schedule.map(row => row.balance);
+            const equities = schedule.map(row => row.home_equity);
+            const investments = schedule.map(row => row.investment_portfolio);
+            const combined = schedule.map(row => row.combined_wealth);
 
-            const trace = {
+            const traceEquity = {
                 x: periods,
-                y: balances,
+                y: equities,
+                name: 'Home Equity',
                 type: 'scatter',
                 mode: 'lines',
-                name: 'Remaining Balance',
-                line: {
-                    color: '#4f46e5',
-                    width: 3,
-                    shape: 'spline'
-                },
-                fill: 'tozeroy',
-                fillcolor: 'rgba(79, 70, 229, 0.1)'
+                stackgroup: 'one',
+                line: { color: '#4f46e5', width: 2 },
+                fillcolor: 'rgba(79, 70, 229, 0.4)'
+            };
+
+            const traceInvestments = {
+                x: periods,
+                y: investments,
+                name: 'Investments',
+                type: 'scatter',
+                mode: 'lines',
+                stackgroup: 'one',
+                line: { color: '#10b981', width: 2 },
+                fillcolor: 'rgba(16, 185, 129, 0.4)'
+            };
+
+            const traceCombined = {
+                x: periods,
+                y: combined,
+                name: 'Combined Wealth',
+                type: 'scatter',
+                mode: 'lines',
+                line: { color: '#000', width: 2, dash: 'dot' }
             };
 
             const layout = {
                 title: {
-                    text: 'Remaining Balance Over Time',
-                    font: { family: 'Inter', size: 20, weight: 700 }
+                    text: 'Combined Wealth Projection',
+                    font: { family: 'Inter', size: 24, weight: 700 }
                 },
                 xaxis: {
-                    title: 'Payment Period (Months)',
+                    title: 'Months',
                     gridcolor: '#f0f0f0'
                 },
                 yaxis: {
-                    title: 'Balance ($)',
+                    title: 'Wealth (€)',
                     gridcolor: '#f0f0f0',
-                    tickformat: '$,.0f'
+                    tickformat: '€,.0f'
                 },
-                margin: { t: 60, b: 60, l: 80, r: 40 },
+                margin: { t: 80, b: 60, l: 80, r: 40 },
                 hovermode: 'x unified',
+                legend: { orientation: 'h', y: -0.2 },
                 paper_bgcolor: 'rgba(0,0,0,0)',
                 plot_bgcolor: 'rgba(0,0,0,0)'
             };
 
             const config = { responsive: true, displayModeBar: false };
-
-            Plotly.newPlot('balance-plot', [trace], layout, config);
+            Plotly.newPlot('wealth-plot', [traceEquity, traceInvestments, traceCombined], layout, config);
             }) ();
         </script>
         {% endif %}
