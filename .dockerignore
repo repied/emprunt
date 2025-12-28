@@ -1,5 +1,7 @@
-.git
+.dockerignore
+.gcloudignore
 .gitignore
+.git
 .devcontainer
 .vscode
 .pytest_cache
@@ -7,8 +9,10 @@ tests
 __pycache__
 *.pyc
 *.pyo
+*.egg-info/
 *.pyd
 .db
+venv/
 .env
 Dockerfile
 README.md
