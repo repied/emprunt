@@ -27,40 +27,43 @@
     <main>
         <section class="form">
             <form method="post" action="/simulate">
-                <div class="dual-grid">
+                <div class="common-block">
+                    <div class="scenario-title">Common Parameters</div>
+                    <div class="form-grid">
+                        <label>Home Cost (€)
+                            <input name="home_cost" type="text"
+                                value="{{ '{:,.0f}'.format(result1.home_cost) if result1 else '1,050,000' }}" required>
+                        </label>
+                        <label>Initial Savings (€)
+                            <input name="savings" type="text"
+                                value="{{ '{:,.0f}'.format(result1.savings) if result1 else '1,050,000' }}" required>
+                        </label>
+                        <label>Mortgage Annual rate (%)
+                            <input name="annual_rate" type="number" step="0.01"
+                                value="{{ result1.annual_rate if result1 else 3.5 }}" required>
+                        </label>
+                        <label>Years
+                            <input name="years" type="number" value="{{ result1.years if result1 else 20 }}" required>
+                        </label>
+                        <label>Investment rate (%)
+                            <input name="investment_rate" type="number" step="0.1"
+                                value="{{ result1.investment_rate if result1 else 5.0 }}" required>
+                        </label>
+                        <label>Monthly Cash flow (€)
+                            <input name="monthly_cash" type="text"
+                                value="{{ '{:,.0f}'.format(result1.monthly_cash) if result1 else '4,000' }}" required>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="dual-grid" style="margin-top: 2rem;">
                     <!-- Scenario A -->
                     <div class="scenario-block">
                         <div class="scenario-title">Scenario A</div>
-                        <div class="form-grid">
-                            <label>Home Cost (€)
-                                <input name="s1_home_cost" type="text"
-                                    value="{{ '{:,.0f}'.format(result1.home_cost) if result1 else '1,000,000' }}"
-                                    required>
-                            </label>
+                        <div class="form-grid" style="grid-template-columns: 1fr;">
                             <label>Down Payment (€)
                                 <input name="s1_down_payment" type="text"
-                                    value="{{ '{:,.0f}'.format(result1.down_payment) if result1 else '200,000' }}"
-                                    required>
-                            </label>
-                            <label>Annual Rate (%)
-                                <input name="s1_annual_rate" type="number" step="0.01"
-                                    value="{{ result1.annual_rate if result1 else 3.0 }}" required>
-                            </label>
-                            <label>Years
-                                <input name="s1_years" type="number" value="{{ result1.years if result1 else 20 }}"
-                                    required>
-                            </label>
-                            <label>Initial Savings (€)
-                                <input name="s1_savings" type="text" value="{{ '{:,.0f}'.format(result1.savings) if
-                                    result1 else '1,000,000' }}" required>
-                            </label>
-                            <label>Investment Rate (%)
-                                <input name="s1_investment_rate" type="number" step="0.1"
-                                    value="{{ result1.investment_rate if result1 else 3.0 }}" required>
-                            </label>
-                            <label>Monthly Cash flow (€)
-                                <input name="s1_monthly_cash" type="text"
-                                    value="{{ '{:,.0f}'.format(result1.monthly_cash) if result1 else '5,000' }}"
+                                    value="{{ '{:,.0f}'.format(result1.down_payment) if result1 else '400,000' }}"
                                     required>
                             </label>
                         </div>
@@ -69,36 +72,10 @@
                     <!-- Scenario B -->
                     <div class="scenario-block">
                         <div class="scenario-title">Scenario B</div>
-                        <div class="form-grid">
-                            <label>Home Cost (€)
-                                <input name="s2_home_cost" type="text"
-                                    value="{{ ' {:,.0f}'.format(result2.home_cost) if result2 else '1,000,000' }}"
-                                    required>
-                            </label>
+                        <div class="form-grid" style="grid-template-columns: 1fr;">
                             <label>Down Payment (€)
                                 <input name="s2_down_payment" type="text"
-                                    value="{{ ' {:,.0f}'.format(result2.down_payment) if result2 else '800,000' }}"
-                                    required>
-                            </label>
-                            <label>Annual Rate (%)
-                                <input name="s2_annual_rate" type="number" step="0.01"
-                                    value="{{ result2.annual_rate if result2 else 3.0 }}" required>
-                            </label>
-                            <label>Years
-                                <input name="s2_years" type="number" value="{{ result2.years if result2 else 20 }}"
-                                    required>
-                            </label>
-                            <label>Initial Savings (€)
-                                <input name="s2_savings" type="text" value="{{ ' {:,.0f}'.format(result2.savings) if
-                                    result2 else '1,000,000' }}" required>
-                            </label>
-                            <label>Investment Rate (%)
-                                <input name="s2_investment_rate" type="number" step="0.1"
-                                    value="{{ result2.investment_rate if result2 else 3.0 }}" required>
-                            </label>
-                            <label>Monthly Cash flow (€)
-                                <input name="s2_monthly_cash" type="text"
-                                    value="{{ ' {:,.0f}'.format(result2.monthly_cash) if result2 else '5,000' }}"
+                                    value="{{ '{:,.0f}'.format(result2.down_payment) if result2 else '700,000' }}"
                                     required>
                             </label>
                         </div>
@@ -108,7 +85,14 @@
             </form>
         </section>
 
-        {% if result1 and result2 %}
+        {% if error %}
+        <div class="error-msg"
+            style="color: #ef4444; background: #fee2e2; padding: 1rem; border-radius: 8px; margin-bottom: 2rem; border: 1px solid #fecaca; text-align: center; font-weight: 600;">
+            Error: {{ error }}
+        </div>
+        {% endif %}
+
+        {% if result1 and result2 and result1.schedule %}
         <section class="result">
             <h2>Scenario Comparison</h2>
 
@@ -119,15 +103,15 @@
             <div class="dual-grid">
                 <!-- Results Scenario A -->
                 <div class="scenario-block">
-                    <div class="scenario-title">Scenario A Results</div>
+                    <div class="scenario-title">Down Payment: €{{ '{:,.0f}'.format(result1.down_payment) }}</div>
                     <div class="summary-cards">
                         <div class="card">
                             <span class="label">Monthly Payment</span>
-                            <span class="value">€{{ ' {:,.0f}'.format(result1.payment) }}</span>
+                            <span class="value">€{{ '{:,.0f}'.format(result1.payment) }}</span>
                         </div>
                         <div class="card">
                             <span class="label">Final Wealth</span>
-                            <span class="value">€{{ ' {:,.0f}'.format(result1.schedule[-1].combined_wealth) }}</span>
+                            <span class="value">€{{ '{:,.0f}'.format(result1.schedule[-1].combined_wealth) }}</span>
                         </div>
                     </div>
                     <div id="wealth-plot-a" style="width:100%;height:350px;"></div>
@@ -135,7 +119,7 @@
 
                 <!-- Results Scenario B -->
                 <div class="scenario-block">
-                    <div class="scenario-title">Scenario B Results</div>
+                    <div class="scenario-title">Down Payment: €{{ '{:,.0f}'.format(result2.down_payment) }}</div>
                     <div class="summary-cards">
                         <div class="card">
                             <span class="label">Monthly Payment</span>
@@ -152,7 +136,7 @@
 
             <div class="dual-grid" style="margin-top: 3rem;">
                 <div class="table-container">
-                    <h3>Scenario A Schedule</h3>
+                    <h3>Schedule (DP €{{ "{:,.0f}".format(result1.down_payment) }})</h3>
                     <table>
                         <thead>
                             <tr>
@@ -178,7 +162,7 @@
                 </div>
 
                 <div class="table-container">
-                    <h3>Scenario B Schedule</h3>
+                    <h3>Schedule (DP €{{ "{:,.0f}".format(result2.down_payment) }})</h3>
                     <table>
                         <thead>
                             <tr>
@@ -208,9 +192,11 @@
 
         <script>
             (function () {
-                const s1 = {{ result1.schedule | tojson | safe
+                const s1 = {{ (result1.schedule if result1 and result1.schedule else[]) | tojson | safe
             }};
-            const s2 = {{ result2.schedule | tojson | safe }};
+            const s2 = {{ (result2.schedule if result2 and result2.schedule else[]) | tojson | safe }};
+            const dp1 = "€" + ({{ (result1.down_payment if result1 else 0) | tojson }}).toLocaleString();
+            const dp2 = "€" + ({{ (result2.down_payment if result2 else 0) | tojson }}).toLocaleString();
 
             const periods = s1.map(row => row.period);
 
@@ -218,23 +204,23 @@
             const traceA = {
                 x: periods,
                 y: s1.map(row => row.combined_wealth),
-                name: 'Scenario A Wealth',
+                name: 'DP ' + dp1,
                 line: { color: '#4f46e5', width: 3 }
             };
             const traceB = {
                 x: periods,
                 y: s2.map(row => row.combined_wealth),
-                name: 'Scenario B Wealth',
+                name: 'DP ' + dp2,
                 line: { color: '#ef4444', width: 3 }
             };
 
             const layoutComp = {
-                title: { text: 'Combined Wealth Comparison', font: { family: 'Inter', size: 24, weight: 700 } },
-                xaxis: { title: 'Months' },
-                yaxis: { title: 'Wealth (€)', tickformat: '€,.0f' },
+                title: { text: 'Combined Wealth Comparison', font: { family: 'Inter', size: 24, color: '#f8fafc' } },
+                xaxis: { title: 'Months', gridcolor: 'rgba(255,255,255,0.05)', tickfont: { color: '#94a3b8' } },
+                yaxis: { title: 'Wealth (€)', tickformat: '€,.0f', gridcolor: 'rgba(255,255,255,0.05)', tickfont: { color: '#94a3b8' } },
                 margin: { t: 80, b: 60, l: 80, r: 40 },
                 hovermode: 'x unified',
-                legend: { orientation: 'h', y: -0.2 },
+                legend: { orientation: 'h', y: -0.2, font: { color: '#f8fafc' } },
                 paper_bgcolor: 'rgba(0,0,0,0)',
                 plot_bgcolor: 'rgba(0,0,0,0)'
             };
@@ -244,16 +230,16 @@
             const createIndividualPlot = (id, data, title) => {
                 const traceEquity = {
                     x: periods, y: data.map(row => row.home_equity),
-                    name: 'Equity', stackgroup: 'one', line: { color: '#4f46e5', width: 1 }, fillcolor: '#4f46e544'
+                    name: 'Equity', stackgroup: 'one', line: { color: '#6366f1', width: 2 }, fillcolor: 'rgba(99, 102, 241, 0.3)'
                 };
                 const traceInvest = {
                     x: periods, y: data.map(row => row.investment_portfolio),
-                    name: 'Invest.', stackgroup: 'one', line: { color: '#10b981', width: 1 }, fillcolor: '#10b98144'
+                    name: 'Invest.', stackgroup: 'one', line: { color: '#10b981', width: 2 }, fillcolor: 'rgba(16, 185, 129, 0.3)'
                 };
                 const layout = {
-                    title: { text: title, font: { family: 'Inter', size: 16, weight: 600 } },
-                    xaxis: { title: 'Months' },
-                    yaxis: { title: '€', tickformat: '€,.0f' },
+                    title: { text: title, font: { family: 'Inter', size: 16, color: '#f8fafc' } },
+                    xaxis: { title: 'Months', gridcolor: 'rgba(255,255,255,0.05)', tickfont: { color: '#94a3b8' } },
+                    yaxis: { title: '€', tickformat: '€,.0f', gridcolor: 'rgba(255,255,255,0.05)', tickfont: { color: '#94a3b8' } },
                     margin: { t: 40, b: 40, l: 60, r: 20 },
                     showlegend: false,
                     paper_bgcolor: 'rgba(0,0,0,0)',
@@ -262,8 +248,8 @@
                 Plotly.newPlot(id, [traceEquity, traceInvest], layout, { responsive: true, displayModeBar: false });
             };
 
-            createIndividualPlot('wealth-plot-a', s1, 'Scenario A Decomposition');
-            createIndividualPlot('wealth-plot-b', s2, 'Scenario B Decomposition');
+            createIndividualPlot('wealth-plot-a', s1, 'Wealth: DP ' + dp1);
+            createIndividualPlot('wealth-plot-b', s2, 'Wealth: DP ' + dp2);
             }) ();
         </script>
         {% endif %}

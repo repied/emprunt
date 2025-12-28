@@ -20,3 +20,21 @@ def test_simulator_invalid_inputs():
     
     with pytest.raises(ValueError, match="Years and payments_per_year must be positive"):
         simulate_mortgage(100000, 20000, 3.5, 0, 30000, 5.0, 1000)
+
+def test_simulator_comparison():
+    # Common parameters
+    home_cost = 500000
+    annual_rate = 3.0
+    years = 20
+    savings = 600000
+    investment_rate = 4.0
+    monthly_cash = 3000
+    
+    # Scenario A: Low down payment
+    res_a = simulate_mortgage(home_cost, 100000, annual_rate, years, savings, investment_rate, monthly_cash)
+    
+    # Scenario B: High down payment
+    res_b = simulate_mortgage(home_cost, 400000, annual_rate, years, savings, investment_rate, monthly_cash)
+    
+    assert res_a["payment"] > res_b["payment"]
+    assert res_a["schedule"][-1]["combined_wealth"] != res_b["schedule"][-1]["combined_wealth"]

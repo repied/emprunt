@@ -30,59 +30,89 @@ class SimRequest(BaseModel):
 
 @app.get("/", response_class=HTMLResponse)
 def index(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request, "result": None})
+    return templates.TemplateResponse(request, "index.html", {
+        "result1": None,
+        "result2": None,
+        "error": None
+    })
 
 
 @app.post("/simulate", response_class=HTMLResponse)
 async def simulate(
     request: Request,
-    # Scenario 1
-    s1_home_cost: str = Form(...),
+    # Common Parameters
+    home_cost: str = Form(...),
+    annual_rate: float = Form(...),
+    years: int = Form(...),
+    savings: str = Form(...),
+    investment_rate: float = Form(...),
+    monthly_cash: str = Form(...),
+    # Scenario Specific
     s1_down_payment: str = Form(...),
-    s1_annual_rate: float = Form(...),
-    s1_years: int = Form(...),
-    s1_savings: str = Form(...),
-    s1_investment_rate: float = Form(...),
-    s1_monthly_cash: str = Form(...),
-    # Scenario 2
-    s2_home_cost: str = Form(...),
     s2_down_payment: str = Form(...),
-    s2_annual_rate: float = Form(...),
-    s2_years: int = Form(...),
-    s2_savings: str = Form(...),
-    s2_investment_rate: float = Form(...),
-    s2_monthly_cash: str = Form(...),
 ):
     def clean_money(val: str) -> float:
-        return float(val.replace(",", ""))
+        if not val:
+            return 0.0
+        import re
+        # Keep only digits and decimal separator
+        cleaned = re.sub(r'[^\d.]', '', val)
+        try:
+            return float(cleaned)
+        except ValueError:
+            return 0.0
 
-    # Run Scenario 1
-    res1 = simulate_mortgage(
-        clean_money(s1_home_cost),
-        clean_money(s1_down_payment),
-        s1_annual_rate,
-        s1_years,
-        clean_money(s1_savings),
-        s1_investment_rate,
-        clean_money(s1_monthly_cash)
-    )
+    try:
+        c_home_cost = clean_money(home_cost)
+        c_savings = clean_money(savings)
+        c_monthly_cash = clean_money(monthly_cash)
 
-    # Run Scenario 2
-    res2 = simulate_mortgage(
-        clean_money(s2_home_cost),
-        clean_money(s2_down_payment),
-        s2_annual_rate,
-        s2_years,
-        clean_money(s2_savings),
-        s2_investment_rate,
-        clean_money(s2_monthly_cash)
-    )
+        # Run Scenario 1
+        res1 = simulate_mortgage(
+            c_home_cost,
+            clean_money(s1_down_payment),
+            annual_rate,
+            years,
+            c_savings,
+            investment_rate,
+            c_monthly_cash
+        )
 
-    return templates.TemplateResponse("index.html", {
-        "request": request,
-        "result1": res1,
-        "result2": res2
-    })
+        # Run Scenario 2
+        res2 = simulate_mortgage(
+            c_home_cost,
+            clean_money(s2_down_payment),
+            annual_rate,
+            years,
+            c_savings,
+            investment_rate,
+            c_monthly_cash
+        )
+
+        return templates.TemplateResponse(request, "index.html", {
+            "result1": res1,
+            "result2": res2,
+            "error": None
+        })
+    except Exception as e:
+        # Create a dummy result object to preserve form values
+        dummy1 = {
+            "home_cost": c_home_cost if 'c_home_cost' in locals() else 0,
+            "savings": c_savings if 'c_savings' in locals() else 0,
+            "annual_rate": annual_rate,
+            "years": years,
+            "investment_rate": investment_rate,
+            "monthly_cash": c_monthly_cash if 'c_monthly_cash' in locals() else 0,
+            "down_payment": clean_money(s1_down_payment)
+        }
+        dummy2 = {
+            "down_payment": clean_money(s2_down_payment)
+        }
+        return templates.TemplateResponse(request, "index.html", {
+            "result1": dummy1,
+            "result2": dummy2,
+            "error": str(e)
+        })
 
 
 @app.post("/api/simulate")
