@@ -40,7 +40,10 @@ def simulate_mortgage(
         payment = principal * r * (1 + r) ** n / ((1 + r) ** n - 1)
 
     if payment > monthly_cash:
-        raise ValueError(f"Monthly payment (€{payment:,.2f}) exceeds disposable monthly cash (€{monthly_cash:,.2f})")
+        raise ValueError(f"Monthly payment (€{payment:,.0f}) exceeds disposable monthly cash (€{monthly_cash:,.0f})")
+    
+    if savings < down_payment:
+        raise ValueError(f"Savings (€{savings:,.0f}) cannot be less than down payment (€{down_payment:,.0f})") 
 
     # Initial state
     investment_portfolio = savings - down_payment

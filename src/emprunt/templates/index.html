@@ -29,7 +29,7 @@
         <span class="moon">🌙</span>
     </button>
     <header>
-        <h1>Emprunt - down payment size impact</h1>
+        <h1>Emprunt - Down Payment Size Impact</h1>
         <p>
             Initial savings are split between down payment and investments.
             Monthly disposable cash is split between mortgage repayments and new investment.
@@ -46,7 +46,7 @@
                             <input name="home_cost" type="text"
                                 value="{{ '{:,.0f}'.format(result1.home_cost) if result1 else '1,050,000' }}" required>
                         </label>
-                        <label>Initial Savings (€)
+                        <label>Initial Cash (€)
                             <input name="savings" type="text"
                                 value="{{ '{:,.0f}'.format(result1.savings) if result1 else '1,050,000' }}" required>
                         </label>
@@ -57,7 +57,7 @@
                         <label>Years
                             <input name="years" type="number" value="{{ result1.years if result1 else 20 }}" required>
                         </label>
-                        <label>Investments return rate (%)
+                        <label>Investments return (%)
                             <input name="investment_rate" type="number" step="0.1"
                                 value="{{ result1.investment_rate if result1 else 5.0 }}" required>
                         </label>
@@ -65,7 +65,7 @@
                             <input name="monthly_cash" type="text"
                                 value="{{ '{:,.0f}'.format(result1.monthly_cash) if result1 else '4,000' }}" required>
                         </label>
-                        <label>Forecasted home appreciation (%)
+                        <label>Home appreciation (%)
                             <input name="home_appreciation_rate" type="number" step="0.1"
                                 value="{{ result1.home_appreciation_rate if (result1 and result1.home_appreciation_rate is defined) else 2.0 }}"
                                 required>
@@ -110,7 +110,7 @@
 
         {% if result1 and result2 and result1.schedule %}
         <section class="result">
-            <h2>Scenario Comparison</h2>
+            <!-- <h2>Scenario Comparison</h2> -->
 
             <div class="dual-grid">
                 <!-- Results Scenario A -->
@@ -127,10 +127,10 @@
                             <span class="value" style="color: var(--secondary);">€{{
                                 "{:,.0f}".format(result1.total_interest / 1000) }}k</span>
                         </div>
-                        <div class="card"
-                            title="Total money you put into the deal: Initial Savings + (Monthly Disposable Cash × Number of Months).">
-                            <span class="label">Total Cash Injected</span>
-                            <span class="value">€{{ "{:,.0f}".format(result1.schedule[-1].total_cash_injected / 1000)
+                        <div class="card" title="Total gains from the investment portfolio (compounded returns).">
+                            <span class="label">Investments gain</span>
+                            <span class="value" style="color: var(--success);">€{{
+                                "{:,.0f}".format(result1.schedule[-1].investment_gains / 1000)
                                 }}k</span>
                         </div>
                         <div class="card"
@@ -146,12 +146,12 @@
                                 style="color: var(--success); border-top: 1px solid var(--border); padding-top: 0.5rem; margin-top: 0.5rem;">€{{
                                 "{:,.0f}".format(result1.schedule[-1].combined_wealth / 1000) }}k</span>
                         </div>
-                        <div class="card" title="The true financial gain: Final Wealth minus Total Cash Injected.">
-                            <span class="label">Total Net Profit</span>
+                        <div class="card"
+                            title="Total money you put into the deal: Initial Cash + (Monthly Disposable Cash × Number of Months).">
+                            <span class="label">Total Cash Injected</span>
                             <span class="value"
-                                style="color: var(--success); border-top: 1px solid var(--border); padding-top: 0.5rem; margin-top: 0.5rem;">€{{
-                                "{:,.0f}".format((result1.schedule[-1].combined_wealth -
-                                result1.schedule[-1].total_cash_injected) / 1000) }}k</span>
+                                style="color: var(--text); border-top: 1px solid var(--border); padding-top: 0.5rem; margin-top: 0.5rem;">€{{
+                                "{:,.0f}".format(result1.schedule[-1].total_cash_injected / 1000) }}k</span>
                         </div>
                     </div>
                     <div id="wealth-plot-a" style="width:100%;height:350px;"></div>
@@ -171,10 +171,10 @@
                             <span class="value" style="color: var(--secondary);">€{{
                                 "{:,.0f}".format(result2.total_interest / 1000) }}k</span>
                         </div>
-                        <div class="card"
-                            title="Total money you put into the deal: Initial Savings + (Monthly Disposable Cash × Number of Months).">
-                            <span class="label">Total Cash Injected</span>
-                            <span class="value">€{{ "{:,.0f}".format(result2.schedule[-1].total_cash_injected / 1000)
+                        <div class="card" title="Total gains from the investment portfolio (compounded returns).">
+                            <span class="label">Investments gain</span>
+                            <span class="value" style="color: var(--success);">€{{
+                                "{:,.0f}".format(result2.schedule[-1].investment_gains / 1000)
                                 }}k</span>
                         </div>
                         <div class="card"
@@ -190,12 +190,12 @@
                                 style="color: var(--success); border-top: 1px solid var(--border); padding-top: 0.5rem; margin-top: 0.5rem;">€{{
                                 "{:,.0f}".format(result2.schedule[-1].combined_wealth / 1000) }}k</span>
                         </div>
-                        <div class="card" title="The true financial gain: Final Wealth minus Total Cash Injected.">
-                            <span class="label">Total Net Profit</span>
+                        <div class="card"
+                            title="Total money you put into the deal: Initial Cash + (Monthly Disposable Cash × Number of Months).">
+                            <span class="label">Total Cash Injected</span>
                             <span class="value"
-                                style="color: var(--success); border-top: 1px solid var(--border); padding-top: 0.5rem; margin-top: 0.5rem;">€{{
-                                "{:,.0f}".format((result2.schedule[-1].combined_wealth -
-                                result2.schedule[-1].total_cash_injected) / 1000) }}k</span>
+                                style="color: var(--text); border-top: 1px solid var(--border); padding-top: 0.5rem; margin-top: 0.5rem;">€{{
+                                "{:,.0f}".format(result2.schedule[-1].total_cash_injected / 1000) }}k</span>
                         </div>
                     </div>
                     <div id="wealth-plot-b" style="width:100%;height:350px;"></div>
@@ -262,8 +262,8 @@
                     title: { text: title, font: { size: 16, color: currentColors.text } },
                     xaxis: { title: 'Months', gridcolor: currentColors.grid, tickfont: { color: currentColors.muted } },
                     yaxis: {
-                        title: '€',
-                        tickformat: '€,.0f',
+                        tickprefix: '€',
+                        exponentformat: 'SI',
                         gridcolor: currentColors.grid,
                         tickfont: { color: currentColors.muted },
                         range: [0, yMax * 1.05]
