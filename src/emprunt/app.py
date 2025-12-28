@@ -25,6 +25,7 @@ class SimRequest(BaseModel):
     savings: float
     investment_rate: float
     monthly_cash: float
+    home_appreciation_rate: float = 0.0
     payments_per_year: int = 12
 
 
@@ -47,6 +48,7 @@ async def simulate(
     savings: str = Form(...),
     investment_rate: float = Form(...),
     monthly_cash: str = Form(...),
+    home_appreciation_rate: float = Form(0.0),
     # Scenario Specific
     s1_down_payment: str = Form(...),
     s2_down_payment: str = Form(...),
@@ -75,7 +77,8 @@ async def simulate(
             years,
             c_savings,
             investment_rate,
-            c_monthly_cash
+            c_monthly_cash,
+            home_appreciation_rate
         )
 
         # Run Scenario 2
@@ -86,7 +89,8 @@ async def simulate(
             years,
             c_savings,
             investment_rate,
-            c_monthly_cash
+            c_monthly_cash,
+            home_appreciation_rate
         )
 
         return templates.TemplateResponse(request, "index.html", {
@@ -103,6 +107,7 @@ async def simulate(
             "years": years,
             "investment_rate": investment_rate,
             "monthly_cash": c_monthly_cash if 'c_monthly_cash' in locals() else 0,
+            "home_appreciation_rate": home_appreciation_rate,
             "down_payment": clean_money(s1_down_payment)
         }
         dummy2 = {
@@ -125,6 +130,7 @@ def api_simulate(req: SimRequest):
         req.savings,
         req.investment_rate,
         req.monthly_cash,
+        req.home_appreciation_rate,
         req.payments_per_year
     )
     return JSONResponse(content=result)

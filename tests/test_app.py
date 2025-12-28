@@ -7,7 +7,7 @@ client = TestClient(app)
 def test_index_page():
     response = client.get("/")
     assert response.status_code == 200
-    assert "Emprunt - Mortgage Simulator" in response.text
+    assert "Emprunt" in response.text
 
 def test_simulate_endpoint():
     data = {

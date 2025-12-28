@@ -31,7 +31,7 @@
     <header>
         <h1>Emprunt - down payment size impact</h1>
         <p>
-            Initial savings are split between down payment and investment account.
+            Initial savings are split between down payment and investments.
             Monthly disposable cash is split between mortgage repayments and new investment.
         </p>
     </header>
@@ -50,20 +50,25 @@
                             <input name="savings" type="text"
                                 value="{{ '{:,.0f}'.format(result1.savings) if result1 else '1,050,000' }}" required>
                         </label>
-                        <label>Mortgage Annual rate (%)
+                        <label>Mortgage rate (%)
                             <input name="annual_rate" type="number" step="0.01"
                                 value="{{ result1.annual_rate if result1 else 3.5 }}" required>
                         </label>
                         <label>Years
                             <input name="years" type="number" value="{{ result1.years if result1 else 20 }}" required>
                         </label>
-                        <label>Investment rate (%)
+                        <label>Investments return rate (%)
                             <input name="investment_rate" type="number" step="0.1"
                                 value="{{ result1.investment_rate if result1 else 5.0 }}" required>
                         </label>
-                        <label>Monthly Cash flow (€)
+                        <label>Monthly disposable cash (€)
                             <input name="monthly_cash" type="text"
                                 value="{{ '{:,.0f}'.format(result1.monthly_cash) if result1 else '4,000' }}" required>
+                        </label>
+                        <label>Forecasted home appreciation (%)
+                            <input name="home_appreciation_rate" type="number" step="0.1"
+                                value="{{ result1.home_appreciation_rate if (result1 and result1.home_appreciation_rate is defined) else 2.0 }}"
+                                required>
                         </label>
                     </div>
                 </div>
@@ -111,14 +116,42 @@
                 <!-- Results Scenario A -->
                 <div class="scenario-block">
                     <div class="scenario-title">Down Payment: €{{ '{:,.0f}'.format(result1.down_payment) }}</div>
-                    <div class="summary-cards">
-                        <div class="card">
+                    <div class="summary-cards" style="grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));">
+                        <div class="card" title="The amount you pay to the bank every month for the mortgage.">
                             <span class="label">Monthly Payment</span>
-                            <span class="value">€{{ '{:,.0f}'.format(result1.payment) }}</span>
+                            <span class="value">€{{ "{:,.0f}".format(result1.payment) }}</span>
                         </div>
-                        <div class="card">
+                        <div class="card"
+                            title="The total sum of all interest payments made to the bank over the full duration of the mortgage.">
+                            <span class="label">Total Interest Cost</span>
+                            <span class="value" style="color: var(--secondary);">€{{
+                                "{:,.0f}".format(result1.total_interest / 1000) }}k</span>
+                        </div>
+                        <div class="card"
+                            title="Total money you put into the deal: Initial Savings + (Monthly Disposable Cash × Number of Months).">
+                            <span class="label">Total Cash Injected</span>
+                            <span class="value">€{{ "{:,.0f}".format(result1.schedule[-1].total_cash_injected / 1000)
+                                }}k</span>
+                        </div>
+                        <div class="card"
+                            title="The estimated value of the home at the end of the term, including appreciation.">
+                            <span class="label">Final Home Value</span>
+                            <span class="value">€{{ "{:,.0f}".format(result1.schedule[-1].current_home_value / 1000)
+                                }}k</span>
+                        </div>
+                        <div class="card"
+                            title="Your total net worth after the simulation: Home Value + Investment Portfolio.">
                             <span class="label">Final Wealth</span>
-                            <span class="value">€{{ '{:,.0f}'.format(result1.schedule[-1].combined_wealth) }}</span>
+                            <span class="value"
+                                style="color: var(--success); border-top: 1px solid var(--border); padding-top: 0.5rem; margin-top: 0.5rem;">€{{
+                                "{:,.0f}".format(result1.schedule[-1].combined_wealth / 1000) }}k</span>
+                        </div>
+                        <div class="card" title="The true financial gain: Final Wealth minus Total Cash Injected.">
+                            <span class="label">Total Net Profit</span>
+                            <span class="value"
+                                style="color: var(--success); border-top: 1px solid var(--border); padding-top: 0.5rem; margin-top: 0.5rem;">€{{
+                                "{:,.0f}".format((result1.schedule[-1].combined_wealth -
+                                result1.schedule[-1].total_cash_injected) / 1000) }}k</span>
                         </div>
                     </div>
                     <div id="wealth-plot-a" style="width:100%;height:350px;"></div>
@@ -127,78 +160,49 @@
                 <!-- Results Scenario B -->
                 <div class="scenario-block">
                     <div class="scenario-title">Down Payment: €{{ '{:,.0f}'.format(result2.down_payment) }}</div>
-                    <div class="summary-cards">
-                        <div class="card">
+                    <div class="summary-cards" style="grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));">
+                        <div class="card" title="The amount you pay to the bank every month for the mortgage.">
                             <span class="label">Monthly Payment</span>
-                            <span class="value">€{{ '{:,.0f}'.format(result2.payment) }}</span>
+                            <span class="value">€{{ "{:,.0f}".format(result2.payment) }}</span>
                         </div>
-                        <div class="card">
+                        <div class="card"
+                            title="The total sum of all interest payments made to the bank over the full duration of the mortgage.">
+                            <span class="label">Total Interest Cost</span>
+                            <span class="value" style="color: var(--secondary);">€{{
+                                "{:,.0f}".format(result2.total_interest / 1000) }}k</span>
+                        </div>
+                        <div class="card"
+                            title="Total money you put into the deal: Initial Savings + (Monthly Disposable Cash × Number of Months).">
+                            <span class="label">Total Cash Injected</span>
+                            <span class="value">€{{ "{:,.0f}".format(result2.schedule[-1].total_cash_injected / 1000)
+                                }}k</span>
+                        </div>
+                        <div class="card"
+                            title="The estimated value of the home at the end of the term, including appreciation.">
+                            <span class="label">Final Home Value</span>
+                            <span class="value">€{{ "{:,.0f}".format(result2.schedule[-1].current_home_value / 1000)
+                                }}k</span>
+                        </div>
+                        <div class="card"
+                            title="Your total net worth after the simulation: Home Value + Investment Portfolio.">
                             <span class="label">Final Wealth</span>
-                            <span class="value">€{{ '{:,.0f}'.format(result2.schedule[-1].combined_wealth) }}</span>
+                            <span class="value"
+                                style="color: var(--success); border-top: 1px solid var(--border); padding-top: 0.5rem; margin-top: 0.5rem;">€{{
+                                "{:,.0f}".format(result2.schedule[-1].combined_wealth / 1000) }}k</span>
+                        </div>
+                        <div class="card" title="The true financial gain: Final Wealth minus Total Cash Injected.">
+                            <span class="label">Total Net Profit</span>
+                            <span class="value"
+                                style="color: var(--success); border-top: 1px solid var(--border); padding-top: 0.5rem; margin-top: 0.5rem;">€{{
+                                "{:,.0f}".format((result2.schedule[-1].combined_wealth -
+                                result2.schedule[-1].total_cash_injected) / 1000) }}k</span>
                         </div>
                     </div>
                     <div id="wealth-plot-b" style="width:100%;height:350px;"></div>
                 </div>
             </div>
 
-            <div id="plot-container">
-                <div id="comparison-plot" style="width:100%;height:500px;"></div>
-            </div>
 
-            <div class="dual-grid" style="margin-top: 3rem;">
-                <div class="table-container">
-                    <h3>Schedule (DP €{{ "{:,.0f}".format(result1.down_payment) }})</h3>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Month</th>
-                                <th>Equity</th>
-                                <th>Invest.</th>
-                                <th>Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for row in result1.schedule %}
-                            {% if loop.index % (12*5) == 1 or loop.last %}
-                            <tr>
-                                <td>{{ row.period }}</td>
-                                <td>€{{ "{:,.0f}".format(row.home_equity) }}</td>
-                                <td>€{{ "{:,.0f}".format(row.investment_portfolio) }}</td>
-                                <td>€{{ "{:,.0f}".format(row.combined_wealth) }}</td>
-                            </tr>
-                            {% endif %}
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="table-container">
-                    <h3>Schedule (DP €{{ "{:,.0f}".format(result2.down_payment) }})</h3>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Month</th>
-                                <th>Equity</th>
-                                <th>Invest.</th>
-                                <th>Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for row in result2.schedule %}
-                            {% if loop.index % (12*5) == 1 or loop.last %}
-                            <tr>
-                                <td>{{ row.period }}</td>
-                                <td>€{{ "{:,.0f}".format(row.home_equity) }}</td>
-                                <td>€{{ "{:,.0f}".format(row.investment_portfolio) }}</td>
-                                <td>€{{ "{:,.0f}".format(row.combined_wealth) }}</td>
-                            </tr>
-                            {% endif %}
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <p class="table-note" style="text-align: center;">* Showing every 5 years for brevity.</p>
         </section>
 
         <script>
@@ -229,55 +233,54 @@
                 font: { family: 'Inter' }
             });
 
-            // Combined Comparison Plot
-            const traceA = {
-                x: periods,
-                y: s1.map(row => row.combined_wealth),
-                name: 'DP ' + dp1,
-                line: { color: '#4f46e5', width: 3 }
-            };
-            const traceB = {
-                x: periods,
-                y: s2.map(row => row.combined_wealth),
-                name: 'DP ' + dp2,
-                line: { color: '#ef4444', width: 3 }
-            };
-
-            const layoutComp = {
-                ...commonLayout(),
-                title: { text: 'Combined Wealth Comparison', font: { size: 24, color: colors.text } },
-                xaxis: { title: 'Months', gridcolor: colors.grid, tickfont: { color: colors.muted } },
-                yaxis: { title: 'Wealth (€)', tickformat: '€,.0f', gridcolor: colors.grid, tickfont: { color: colors.muted } },
-                margin: { t: 80, b: 60, l: 80, r: 40 },
-                hovermode: 'x unified',
-                legend: { orientation: 'h', y: -0.2, font: { color: colors.text } }
-            };
-            Plotly.newPlot('comparison-plot', [traceA, traceB], layoutComp, { responsive: true, displayModeBar: false });
 
             // Individual Plots
-            const createIndividualPlot = (id, data, title) => {
+            const createIndividualPlot = (id, data, title, yMax) => {
                 const currentColors = getThemeColors();
-                const traceEquity = {
-                    x: periods, y: data.map(row => row.home_equity),
-                    name: 'Equity', stackgroup: 'one', line: { color: '#6366f1', width: 2 }, fillcolor: 'rgba(99, 102, 241, 0.3)'
+
+                const traceInvestedCash = {
+                    x: periods, y: data.map(row => row.invested_cash_net),
+                    name: 'Invested Cash (Net)', stackgroup: 'one',
+                    line: { color: '#6366f1', width: 2 },
+                    fillcolor: 'rgba(99, 102, 241, 0.4)'
                 };
-                const traceInvest = {
-                    x: periods, y: data.map(row => row.investment_portfolio),
-                    name: 'Invest.', stackgroup: 'one', line: { color: '#10b981', width: 2 }, fillcolor: 'rgba(16, 185, 129, 0.3)'
+                const traceAppreciation = {
+                    x: periods, y: data.map(row => row.home_appreciation),
+                    name: 'Home Appreciation', stackgroup: 'one',
+                    line: { color: '#f59e0b', width: 2 },
+                    fillcolor: 'rgba(245, 158, 11, 0.3)'
                 };
+                const traceGains = {
+                    x: periods, y: data.map(row => row.investment_gains),
+                    name: 'Invest. Gains', stackgroup: 'one',
+                    line: { color: '#10b981', width: 2 },
+                    fillcolor: 'rgba(16, 185, 129, 0.3)'
+                };
+
                 const layout = {
                     ...commonLayout(),
                     title: { text: title, font: { size: 16, color: currentColors.text } },
                     xaxis: { title: 'Months', gridcolor: currentColors.grid, tickfont: { color: currentColors.muted } },
-                    yaxis: { title: '€', tickformat: '€,.0f', gridcolor: currentColors.grid, tickfont: { color: currentColors.muted } },
+                    yaxis: {
+                        title: '€',
+                        tickformat: '€,.0f',
+                        gridcolor: currentColors.grid,
+                        tickfont: { color: currentColors.muted },
+                        range: [0, yMax * 1.05]
+                    },
                     margin: { t: 40, b: 40, l: 60, r: 20 },
-                    showlegend: false
+                    showlegend: true,
+                    legend: { font: { size: 10, color: currentColors.text }, orientation: 'h', y: -0.3 }
                 };
-                Plotly.newPlot(id, [traceEquity, traceInvest], layout, { responsive: true, displayModeBar: false });
+                Plotly.newPlot(id, [traceInvestedCash, traceAppreciation, traceGains], layout, { responsive: true, displayModeBar: false });
             };
 
-            createIndividualPlot('wealth-plot-a', s1, 'Wealth: DP ' + dp1);
-            createIndividualPlot('wealth-plot-b', s2, 'Wealth: DP ' + dp2);
+            const maxWealth1 = s1.length > 0 ? s1[s1.length - 1].combined_wealth : 0;
+            const maxWealth2 = s2.length > 0 ? s2[s2.length - 1].combined_wealth : 0;
+            const commonYMax = Math.max(maxWealth1, maxWealth2);
+
+            createIndividualPlot('wealth-plot-a', s1, 'Wealth Decomposition (Scenario A)', commonYMax);
+            createIndividualPlot('wealth-plot-b', s2, 'Wealth Decomposition (Scenario B)', commonYMax);
 
             // Theme Toggle Logic
             const toggle = document.getElementById('theme-toggle');
@@ -299,7 +302,6 @@
                     'legend.font.color': newColors.text
                 };
 
-                Plotly.relayout('comparison-plot', update);
                 Plotly.relayout('wealth-plot-a', update);
                 Plotly.relayout('wealth-plot-b', update);
             });
