@@ -3,23 +3,108 @@
     --primary-hover: #4f46e5;
     --secondary: #ec4899;
     --success: #10b981;
+    --radius: 16px;
+
+    /* Default Dark Theme */
     --bg: #0f172a;
     --card-bg: rgba(30, 41, 59, 0.7);
     --text: #f8fafc;
     --text-muted: #94a3b8;
     --border: rgba(148, 163, 184, 0.1);
-    --radius: 16px;
     --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
     --glass-bg: rgba(255, 255, 255, 0.03);
     --glass-border: rgba(255, 255, 255, 0.08);
+    --input-bg: rgba(15, 23, 42, 0.6);
+    --input-focus-bg: rgba(15, 23, 42, 0.8);
+    --card-hover-bg: rgba(30, 41, 59, 0.6);
+    --table-header-bg: rgba(15, 23, 42, 0.5);
+    --table-row-hover: rgba(255, 255, 255, 0.02);
+    --bg-grad-1: rgba(99, 102, 241, 0.15);
+    --bg-grad-2: rgba(236, 72, 153, 0.1);
+    --common-bg: rgba(15, 23, 42, 0.5);
+    --card-inner-bg: rgba(15, 23, 42, 0.4);
+    --input-text: #ffffff;
+    --card-value-text: #ffffff;
+    --plot-grid: rgba(255, 255, 255, 0.05);
+}
+
+@media (prefers-color-scheme: light) {
+    :root:not([data-theme='dark']) {
+        --bg: #f8fafc;
+        --card-bg: rgba(255, 255, 255, 0.8);
+        --text: #0f172a;
+        --text-muted: #475569;
+        --border: rgba(0, 0, 0, 0.05);
+        --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        --glass-bg: rgba(255, 255, 255, 0.7);
+        --glass-border: rgba(0, 0, 0, 0.1);
+        --input-bg: rgba(255, 255, 255, 0.8);
+        --input-focus-bg: rgba(255, 255, 255, 1);
+        --card-hover-bg: rgba(255, 255, 255, 0.9);
+        --table-header-bg: rgba(241, 245, 249, 0.8);
+        --table-row-hover: rgba(0, 0, 0, 0.02);
+        --bg-grad-1: rgba(99, 102, 241, 0.07);
+        --bg-grad-2: rgba(236, 72, 153, 0.05);
+        --common-bg: rgba(241, 245, 249, 0.5);
+        --card-inner-bg: rgba(241, 245, 249, 0.4);
+        --input-text: #0f172a;
+        --card-value-text: #0f172a;
+        --plot-grid: rgba(0, 0, 0, 0.05);
+    }
+}
+
+[data-theme='light'] {
+    --bg: #f8fafc;
+    --card-bg: rgba(255, 255, 255, 0.8);
+    --text: #0f172a;
+    --text-muted: #475569;
+    --border: rgba(0, 0, 0, 0.05);
+    --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(0, 0, 0, 0.1);
+    --input-bg: rgba(255, 255, 255, 0.8);
+    --input-focus-bg: rgba(255, 255, 255, 1);
+    --card-hover-bg: rgba(255, 255, 255, 0.9);
+    --table-header-bg: rgba(241, 245, 249, 0.8);
+    --table-row-hover: rgba(0, 0, 0, 0.02);
+    --bg-grad-1: rgba(99, 102, 241, 0.07);
+    --bg-grad-2: rgba(236, 72, 153, 0.05);
+    --common-bg: rgba(241, 245, 249, 0.5);
+    --card-inner-bg: rgba(241, 245, 249, 0.4);
+    --input-text: #0f172a;
+    --card-value-text: #0f172a;
+    --plot-grid: rgba(0, 0, 0, 0.05);
+}
+
+[data-theme='dark'] {
+    --bg: #0f172a;
+    --card-bg: rgba(30, 41, 59, 0.7);
+    --text: #f8fafc;
+    --text-muted: #94a3b8;
+    --border: rgba(148, 163, 184, 0.1);
+    --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+    --glass-bg: rgba(255, 255, 255, 0.03);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --input-bg: rgba(15, 23, 42, 0.6);
+    --input-focus-bg: rgba(15, 23, 42, 0.8);
+    --card-hover-bg: rgba(30, 41, 59, 0.6);
+    --table-header-bg: rgba(15, 23, 42, 0.5);
+    --table-row-hover: rgba(255, 255, 255, 0.02);
+    --bg-grad-1: rgba(99, 102, 241, 0.15);
+    --bg-grad-2: rgba(236, 72, 153, 0.1);
+    --common-bg: rgba(15, 23, 42, 0.5);
+    --card-inner-bg: rgba(15, 23, 42, 0.4);
+    --input-text: #ffffff;
+    --card-value-text: #ffffff;
+    --plot-grid: rgba(255, 255, 255, 0.05);
 }
 
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background-color: var(--bg);
     background-image:
-        radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
-        radial-gradient(at 100% 0%, rgba(236, 72, 153, 0.1) 0px, transparent 50%);
+        radial-gradient(at 0% 0%, var(--bg-grad-1) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, var(--bg-grad-2) 0px, transparent 50%);
     color: var(--text);
     margin: 0;
     line-height: 1.6;
@@ -74,7 +159,7 @@ section {
 }
 
 .common-block {
-    background: rgba(15, 23, 42, 0.5);
+    background: var(--common-bg);
     padding: 2rem;
     border-radius: var(--radius);
     margin-bottom: 2rem;
@@ -116,11 +201,11 @@ label {
 }
 
 input {
-    background: rgba(15, 23, 42, 0.6);
+    background: var(--input-bg);
     border: 1px solid var(--glass-border);
     border-radius: 10px;
     padding: 0.85rem 1rem;
-    color: white;
+    color: var(--input-text);
     font-size: 1rem;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -128,7 +213,7 @@ input {
 input:focus {
     outline: none;
     border-color: var(--primary);
-    background: rgba(15, 23, 42, 0.8);
+    background: var(--input-focus-bg);
     box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
     transform: scale(1.01);
 }
@@ -176,7 +261,7 @@ button:active {
 }
 
 .card {
-    background: rgba(15, 23, 42, 0.4);
+    background: var(--card-inner-bg);
     padding: 1.25rem;
     border-radius: 14px;
     border: 1px solid var(--glass-border);
@@ -186,7 +271,7 @@ button:active {
 .card:hover {
     border-color: var(--primary);
     transform: translateY(-4px);
-    background: rgba(30, 41, 59, 0.6);
+    background: var(--card-hover-bg);
 }
 
 .card .label {
@@ -202,7 +287,7 @@ button:active {
     display: block;
     font-size: 1.5rem;
     font-weight: 800;
-    color: #fff;
+    color: var(--card-value-text);
 }
 
 .result h2 {
@@ -215,7 +300,7 @@ button:active {
 
 .table-container {
     overflow-x: auto;
-    background: rgba(15, 23, 42, 0.3);
+    background: var(--card-inner-bg);
     border-radius: 12px;
     border: 1px solid var(--glass-border);
 }
@@ -226,7 +311,7 @@ table {
 }
 
 th {
-    background: rgba(15, 23, 42, 0.5);
+    background: var(--table-header-bg);
     padding: 1rem;
     text-align: left;
     color: var(--text-muted);
@@ -242,10 +327,18 @@ td {
 }
 
 tr:hover td {
-    background: rgba(255, 255, 255, 0.02);
+    background: var(--table-row-hover);
 }
 
 .error-msg {
+    color: #ef4444;
+    background: var(--card-inner-bg);
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    text-align: center;
+    font-weight: 600;
     animation: slideIn 0.3s ease-out;
 }
 
@@ -266,4 +359,76 @@ footer {
     text-align: center;
     color: var(--text-muted);
     font-weight: 500;
+}
+
+.theme-toggle {
+    position: fixed;
+    top: 1.5rem;
+    right: 1.5rem;
+    background: var(--card-bg);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1000;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow);
+    color: var(--text);
+    font-size: 1.25rem;
+}
+
+.theme-toggle:hover {
+    transform: scale(1.1) rotate(15deg);
+    border-color: var(--primary);
+    background: var(--card-hover-bg);
+}
+
+.theme-toggle .sun {
+    display: none;
+}
+
+.theme-toggle .moon {
+    display: block;
+}
+
+[data-theme='light'] .theme-toggle .sun {
+    display: block;
+}
+
+[data-theme='light'] .theme-toggle .moon {
+    display: none;
+}
+
+@media (prefers-color-scheme: light) {
+    :root:not([data-theme='dark']) .theme-toggle .sun {
+        display: block;
+    }
+
+    :root:not([data-theme='dark']) .theme-toggle .moon {
+        display: none;
+    }
+}
+
+[data-theme='dark'] .theme-toggle .sun {
+    display: none;
+}
+
+[data-theme='dark'] .theme-toggle .moon {
+    display: block;
+}
+
+@media (max-width: 600px) {
+    .theme-toggle {
+        top: 1rem;
+        right: 1rem;
+        width: 38px;
+        height: 38px;
+        font-size: 1.1rem;
+    }
 }

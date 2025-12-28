@@ -11,9 +11,23 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
     <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'light' || (!savedTheme && window.matchMedia('(prefers-color-scheme: light)').matches)) {
+                document.documentElement.setAttribute('data-theme', 'light');
+            } else if (savedTheme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            }
+        })();
+    </script>
 </head>
 
 <body>
+    <button class="theme-toggle" id="theme-toggle" title="Toggle theme">
+        <span class="sun">☀️</span>
+        <span class="moon">🌙</span>
+    </button>
     <header>
         <h1>Emprunt - Mortgage Simulator</h1>
         <p>How to choose the size of a down payment when buying a house? <br>
@@ -86,8 +100,7 @@
         </section>
 
         {% if error %}
-        <div class="error-msg"
-            style="color: #ef4444; background: #fee2e2; padding: 1rem; border-radius: 8px; margin-bottom: 2rem; border: 1px solid #fecaca; text-align: center; font-weight: 600;">
+        <div class="error-msg">
             Error: {{ error }}
         </div>
         {% endif %}
@@ -200,6 +213,24 @@
 
             const periods = s1.map(row => row.period);
 
+            function getThemeColors() {
+                const styles = getComputedStyle(document.documentElement);
+                return {
+                    text: styles.getPropertyValue('--text').trim(),
+                    muted: styles.getPropertyValue('--text-muted').trim(),
+                    grid: styles.getPropertyValue('--plot-grid').trim()
+                };
+            }
+
+            const colors = getThemeColors();
+
+            // Common layout settings
+            const commonLayout = () => ({
+                paper_bgcolor: 'rgba(0,0,0,0)',
+                plot_bgcolor: 'rgba(0,0,0,0)',
+                font: { family: 'Inter' }
+            });
+
             // Combined Comparison Plot
             const traceA = {
                 x: periods,
@@ -215,19 +246,19 @@
             };
 
             const layoutComp = {
-                title: { text: 'Combined Wealth Comparison', font: { family: 'Inter', size: 24, color: '#f8fafc' } },
-                xaxis: { title: 'Months', gridcolor: 'rgba(255,255,255,0.05)', tickfont: { color: '#94a3b8' } },
-                yaxis: { title: 'Wealth (€)', tickformat: '€,.0f', gridcolor: 'rgba(255,255,255,0.05)', tickfont: { color: '#94a3b8' } },
+                ...commonLayout(),
+                title: { text: 'Combined Wealth Comparison', font: { size: 24, color: colors.text } },
+                xaxis: { title: 'Months', gridcolor: colors.grid, tickfont: { color: colors.muted } },
+                yaxis: { title: 'Wealth (€)', tickformat: '€,.0f', gridcolor: colors.grid, tickfont: { color: colors.muted } },
                 margin: { t: 80, b: 60, l: 80, r: 40 },
                 hovermode: 'x unified',
-                legend: { orientation: 'h', y: -0.2, font: { color: '#f8fafc' } },
-                paper_bgcolor: 'rgba(0,0,0,0)',
-                plot_bgcolor: 'rgba(0,0,0,0)'
+                legend: { orientation: 'h', y: -0.2, font: { color: colors.text } }
             };
             Plotly.newPlot('comparison-plot', [traceA, traceB], layoutComp, { responsive: true, displayModeBar: false });
 
             // Individual Plots
             const createIndividualPlot = (id, data, title) => {
+                const currentColors = getThemeColors();
                 const traceEquity = {
                     x: periods, y: data.map(row => row.home_equity),
                     name: 'Equity', stackgroup: 'one', line: { color: '#6366f1', width: 2 }, fillcolor: 'rgba(99, 102, 241, 0.3)'
@@ -237,19 +268,43 @@
                     name: 'Invest.', stackgroup: 'one', line: { color: '#10b981', width: 2 }, fillcolor: 'rgba(16, 185, 129, 0.3)'
                 };
                 const layout = {
-                    title: { text: title, font: { family: 'Inter', size: 16, color: '#f8fafc' } },
-                    xaxis: { title: 'Months', gridcolor: 'rgba(255,255,255,0.05)', tickfont: { color: '#94a3b8' } },
-                    yaxis: { title: '€', tickformat: '€,.0f', gridcolor: 'rgba(255,255,255,0.05)', tickfont: { color: '#94a3b8' } },
+                    ...commonLayout(),
+                    title: { text: title, font: { size: 16, color: currentColors.text } },
+                    xaxis: { title: 'Months', gridcolor: currentColors.grid, tickfont: { color: currentColors.muted } },
+                    yaxis: { title: '€', tickformat: '€,.0f', gridcolor: currentColors.grid, tickfont: { color: currentColors.muted } },
                     margin: { t: 40, b: 40, l: 60, r: 20 },
-                    showlegend: false,
-                    paper_bgcolor: 'rgba(0,0,0,0)',
-                    plot_bgcolor: 'rgba(0,0,0,0)'
+                    showlegend: false
                 };
                 Plotly.newPlot(id, [traceEquity, traceInvest], layout, { responsive: true, displayModeBar: false });
             };
 
             createIndividualPlot('wealth-plot-a', s1, 'Wealth: DP ' + dp1);
             createIndividualPlot('wealth-plot-b', s2, 'Wealth: DP ' + dp2);
+
+            // Theme Toggle Logic
+            const toggle = document.getElementById('theme-toggle');
+            toggle.addEventListener('click', () => {
+                const currentTheme = document.documentElement.getAttribute('data-theme');
+                const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+
+                document.documentElement.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+
+                // Update Plots
+                const newColors = getThemeColors();
+                const update = {
+                    'title.font.color': newColors.text,
+                    'xaxis.tickfont.color': newColors.muted,
+                    'xaxis.gridcolor': newColors.grid,
+                    'yaxis.tickfont.color': newColors.muted,
+                    'yaxis.gridcolor': newColors.grid,
+                    'legend.font.color': newColors.text
+                };
+
+                Plotly.relayout('comparison-plot', update);
+                Plotly.relayout('wealth-plot-a', update);
+                Plotly.relayout('wealth-plot-b', update);
+            });
             }) ();
         </script>
         {% endif %}
