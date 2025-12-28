@@ -29,12 +29,10 @@
         <span class="moon">🌙</span>
     </button>
     <header>
-        <h1>Emprunt - Mortgage Simulator</h1>
-        <p>How to choose the size of a down payment when buying a house? <br>
-            This tool helps to visualize different scenarios.<br>
-            It assumes that initial savings are split between the down payment and an investment account.<br>
-            And that later monthly disposable cash flows will be split between mortgage repayments and
-            investment contributions.
+        <h1>Emprunt - down payment size impact</h1>
+        <p>
+            Initial savings are split between down payment and investment account.
+            Monthly disposable cash is split between mortgage repayments and new investment.
         </p>
     </header>
 
@@ -109,10 +107,6 @@
         <section class="result">
             <h2>Scenario Comparison</h2>
 
-            <div id="plot-container">
-                <div id="comparison-plot" style="width:100%;height:500px;"></div>
-            </div>
-
             <div class="dual-grid">
                 <!-- Results Scenario A -->
                 <div class="scenario-block">
@@ -145,6 +139,10 @@
                     </div>
                     <div id="wealth-plot-b" style="width:100%;height:350px;"></div>
                 </div>
+            </div>
+
+            <div id="plot-container">
+                <div id="comparison-plot" style="width:100%;height:500px;"></div>
             </div>
 
             <div class="dual-grid" style="margin-top: 3rem;">
